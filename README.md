@@ -211,11 +211,16 @@ IMPORTANT: Install PyTorch with the correct CUDA version for your GPU. The 'cuXX
 pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https://download.pytorch.org/whl/cu118
 ```  
 ### Install other ComfyUI requirements
+```
     pip install -r requirements.txt
+```
 
-###. Run ComfyUI
-Note: To run ComfyUI, you must first enter the Nix shell (nix-shell) and then activate your Python virtual environment (source venv/bin/activate).
-
+### Run ComfyUI
+Note: To run ComfyUI, you must first enter the Nix shell (nix-shell) and then activate your Python virtual environment 
+```
+source venv/bin/activate).
+```
+and then 
 ```
 python main.py
 ```

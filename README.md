@@ -30,8 +30,8 @@ If you require a specific CUDA Toolkit version not provided by default, advanced
   the "unfree" category.
 
 ```
-   nixpkgs.config.cudaSupport = true;
-   nixpkgs.config.allowUnfree = true;
+    nixpkgs.config.cudaSupport = true;
+    nixpkgs.config.allowUnfree = true;
 ```
 
   ### 1.2. Kernel Modules and Boot Parameters
@@ -39,21 +39,19 @@ If you require a specific CUDA Toolkit version not provided by default, advanced
   is crucial for Wayland and optimal performance.
 
 ```
- boot.initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
- boot.kernelParams = [
- "nvidia-drm.modeset=1"
-];
-   ```
+    boot.initrd.kernelModules = [ "nvidia" "i915" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+    boot.kernelParams = [ "nvidia-drm.modeset=1" ];
+```
 
   ### 1.3. Graphics Hardware Configuration
   This section enables graphics support and explicitly specifies the NVIDIA driver package to be used.
 ```
-      hardware.graphics = {
-        enable = true;
-        extraPackages = with config.boot.kernelPackages; [
-        nvidiaPackages.stable
-        ];
-      };
+    hardware.graphics = {
+      enable = true;
+      extraPackages = with config.boot.kernelPackages; [
+      nvidiaPackages.stable
+      ];
+    };
    ```
   ### 1.4. NVIDIA Driver Configuration
   The hardware.nvidia block is the most critical part for configuring the NVIDIA driver. It includes settings for
@@ -61,7 +59,7 @@ If you require a specific CUDA Toolkit version not provided by default, advanced
   GPUs (Intel + NVIDIA).
 
 ```
-  hardware.nvidia = {
+    hardware.nvidia = {
      modesetting.enable = true;
      powerManagement.enable = true;
      powerManagement.finegrained = true;
@@ -85,16 +83,16 @@ If you require a specific CUDA Toolkit version not provided by default, advanced
   that directly require these libraries or for video acceleration.
 
 ```
-   environment.systemPackages = with pkgs; [
-     # ... other packages ...
-     pkgs.cudatoolkit
-     cudaPackages.cudnn
-     mesa-demos # Provides glxinfo
-     vulkan-tools # Provides vulkaninfo for Vulkan
-     clinfo
-     nvidia-vaapi-driver
-     # ... other packages ...
-      ];
+  environment.systemPackages = with pkgs; [
+    # ... other packages ...
+    pkgs.cudatoolkit
+    cudaPackages.cudnn
+    mesa-demos # Provides glxinfo
+    vulkan-tools # Provides vulkaninfo for Vulkan
+    clinfo
+    nvidia-vaapi-driver
+    # ... other packages ...
+  ];
    ```
 
   ### 1.6. Environment Variables for Wayland & NVIDIA
@@ -103,20 +101,20 @@ If you require a specific CUDA Toolkit version not provided by default, advanced
   Hyprland), ensuring applications use the correct drivers and avoiding compatibility issues.
 
 ```
-    environment.sessionVariables = {
-     GBM_BACKEND = "nvidia-drm";
-     NIXOS_OZONE_WL = "1";
-     LIBVA_DRIVER_NAME = "nvidia";
-     __GLX_VENDOR_LIBRARY_NAME = "nvidia";
-     QT_QPA_PLATFORM = "wayland";
-   };
+  environment.sessionVariables = {
+    GBM_BACKEND = "nvidia-drm";
+    NIXOS_OZONE_WL = "1";
+    LIBVA_DRIVER_NAME = "nvidia";
+    __GLX_VENDOR_LIBRARY_NAME = "nvidia";
+    QT_QPA_PLATFORM = "wayland";
+  };
 ```
 
   1.7. NVIDIA Container Toolkit Support
   If you plan to use Docker or Podman with NVIDIA GPU acceleration, this section enables the nvidia-container-toolkit.
 
 ```
-   hardware.nvidia-container-toolkit.enable = true;
+  hardware.nvidia-container-toolkit.enable = true;
 ```
 ## Nix Shell Environment for ComfyUI with NVIDIA/CUDA Support
 This shell.nix file defines a self-contained and reproducible development environment specifically tailored for running ComfyUI (https://github.com/comfyanonymous/ComfyUI) on systems with NVIDIA GPUs. It significantly simplifies the setup process by providing all necessary dependencies—Python, NVIDIA driver components, CUDA Toolkit, and cuDNN—without requiring system-wide installations that might conflict with other software.
@@ -127,26 +125,26 @@ Key Components and Their Role
 
   1. Environment Definition (pkgs and allowUnfree)
 ```
-    { pkgs ? import <nixpkgs> {
-        config = {
-          allowUnfree = true;
-        };
-      }
-    }:
+  { pkgs ? import <nixpkgs> {
+      config = {
+        allowUnfree = true;
+      };
+    }
+  }:
 ```
 This block initializes the Nix package set (pkgs). The allowUnfree = true; configuration is crucial here because proprietary NVIDIA drivers and CUDA components are considered "unfree" by Nixpkgs, and this setting permits their inclusion in the environment.
 
   2. Core Dependencies (buildInputs)
 
 ```
-      buildInputs = [
-        pkgs.python312          # Python
-        pkgs.stdenv.cc.cc.lib   # libstdc++.so.6
-        pkgs.linuxPackages.nvidia_x11 # Provides NVIDIA driver shared libraries
-        pkgs.cudaPackages.cudatoolkit # CUDA runtime libraries
-        pkgs.cudaPackages.cudnn       # cuDNN library for deep learning acceleration
-        pkgs.git
-      ];
+    buildInputs = [
+      pkgs.python312          # Python
+      pkgs.stdenv.cc.cc.lib   # libstdc++.so.6
+      pkgs.linuxPackages.nvidia_x11 # Provides NVIDIA driver shared libraries
+      pkgs.cudaPackages.cudatoolkit # CUDA runtime libraries
+      pkgs.cudaPackages.cudnn       # cuDNN library for deep learning acceleration
+      pkgs.git
+    ];
 ```
   The buildInputs array lists all the packages that will be made available in the shell environment.
    * `pkgs.python312`: Specifies the exact Python version (3.12) required for ComfyUI.
@@ -160,14 +158,14 @@ This block initializes the Nix package set (pkgs). The allowUnfree = true; confi
 
   3. Runtime Configuration (shellHook)
 ```
-      shellHook = ''
-        export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
-          pkgs.stdenv.cc.cc.lib
-          pkgs.cudaPackages.cudatoolkit
-          pkgs.cudaPackages.cudnn
-          pkgs.linuxPackages.nvidia_x11
-        ]}:$LD_LIBRARY_PATH"
-      '';
+    shellHook = ''
+      export LD_LIBRARY_PATH="${pkgs.lib.makeLibraryPath [
+        pkgs.stdenv.cc.cc.lib
+        pkgs.cudaPackages.cudatoolkit
+        pkgs.cudaPackages.cudnn
+        pkgs.linuxPackages.nvidia_x11
+      ]}:$LD_LIBRARY_PATH"
+    '';
 ```
 The shellHook executes commands every time you enter the nix-shell. This specific hook is vital: it sets the LD_LIBRARY_PATH environment variable. This ensures that the Python environment (and PyTorch within it) can correctly locate and link against the NVIDIA and CUDA shared libraries provided by Nix at runtime. Without this, applications might fail to detect or utilize the GPU.
 
@@ -184,9 +182,6 @@ This command will download and set up all the specified dependencies. This proce
 
    4. Once inside the shell, you can proceed with ComfyUI's installation steps (e.g., creating a Python virtual environment,
       installing requirements.txt, and running main.py).
-
-First, ensure you are in the ComfyUI project root directory (e.g., als/comfyui/ComfyUI).
-
 
 ComfyUI Python Setup (within the Nix shell)
 Similar to the Flakes method, using a venv is recommended for managing ComfyUI's Python dependencies.
@@ -212,7 +207,7 @@ pip install torch==2.7.1 torchvision==0.22.1 torchaudio==2.7.1 --index-url https
 ```  
 ### Install other ComfyUI requirements
 ```
-    pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ### Run ComfyUI

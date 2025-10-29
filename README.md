@@ -19,7 +19,7 @@ This will output a value like 8.6 (which corresponds to sm_86).
 Visit NVIDIA's CUDA GPUs page (https://developer.nvidia.com/cuda-gpus) and find your GPU model to see its compute capability.
 
 ## Compatibility Check  
-Once you know your GPU's sm_XX value, ensure it is supported by the CUDA Toolkit version provided by Nixpkgs. Generally, newer CUDA versions support a wide range ofolder GPUs, but very old GPUs might not be supported by the latest CUDA.
+Once you know your GPU's sm_XX value, ensure it is supported by the CUDA Toolkit version provided by Nixpkgs. Generally, newer CUDA versions support a wide range of older GPUs, but very old GPUs might not be supported by the latest CUDA.
 
 If you require a specific CUDA Toolkit version not provided by default, advanced users can modify the shell.nix (or flake.nix) to specify a different cudaPackages derivation (e.g., pkgs.cudaPackages_11_8.cudatoolkit for CUDA 11.8).
 

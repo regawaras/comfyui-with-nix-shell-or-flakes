@@ -213,7 +213,7 @@ pip install -r requirements.txt
 ### Run ComfyUI
 Note: To run ComfyUI, you must first enter the Nix shell (nix-shell) and then activate your Python virtual environment 
 ```
-source venv/bin/activate).
+source venv/bin/activate)
 ```
 and then 
 ```
